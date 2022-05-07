@@ -63,7 +63,6 @@ type Sprite struct {
 	dx    int
 	dy    int
 	angle int
-	//car cords
 }
 
 //go:embed graphics/frogger.png graphics/redCar.png graphics/yellowCar.png graphics/turtle.png graphics/wood.png graphics/turtle2.png graphics/wood2.png graphics/road.png graphics/redCar2.png graphics/yellowCar2.png
@@ -490,7 +489,7 @@ func (g Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight
 }
 
 func (g *Game) newGame() {
-
+	g.reset()
 }
 
 func main() {
