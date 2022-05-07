@@ -2,7 +2,10 @@ package main
 
 import (
 	"embed"
+<<<<<<< HEAD
 	"fmt"
+=======
+>>>>>>> origin/master
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -195,6 +198,7 @@ func (g *Game) Update() error {
 	g.froggerSprite.xloc += g.froggerSprite.dx
 	if g.frogCollides == true {
 		g.reset()
+<<<<<<< HEAD
 		g.score++
 	}
 	if g.frogCollides == false {
@@ -208,6 +212,17 @@ func (g *Game) Update() error {
 	if g.frogCollides == false {
 		g.frogCollides = angleHitsFrog(g.froggerSprite, g.redcarSprites)
 		g.score++
+=======
+	}
+	if g.frogCollides == false {
+		g.frogCollides = carRedSquishesFrog(g.froggerSprite, g.redcarSprites)
+	}
+	if g.frogCollides == false {
+		g.frogCollides = carYellowSquishesFrog(g.froggerSprite, g.yellowCarSprites)
+	}
+	if g.frogCollides == false {
+		g.frogCollides = angleHitsFrog(g.froggerSprite, g.redcarSprites)
+>>>>>>> origin/master
 	}
 
 	g.angle++
@@ -253,7 +268,11 @@ func movements(g *Game) {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0x80, 0xa0, 0xc0, 0xff})
+<<<<<<< HEAD
 	ebitenutil.DebugPrint(screen, fmt.Sprintf("Score: %d", g.score))
+=======
+	ebitenutil.DebugPrint(screen, "Score: %d")
+>>>>>>> origin/master
 	//first road
 	road1 = ebiten.NewImage(800, 20)
 	opts := &ebiten.DrawImageOptions{}
