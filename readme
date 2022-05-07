@@ -1,0 +1,9 @@
+Anthony DaSilva
+frogger game
+
+got the frog and other images to spawn
+collides with all objects that do not move
+could not get objects to move straight across only at angle, but does not collide
+drew the roads, some of the roads may not fit screen because of your screen size.
+i implemented score at top left but it just goes really fast without stopping
+when you collide it resets, but not everything
