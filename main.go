@@ -2,10 +2,7 @@ package main
 
 import (
 	"embed"
-<<<<<<< HEAD
 	"fmt"
-=======
->>>>>>> origin/master
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -46,6 +43,8 @@ var froggerPict *ebiten.Image
 var blackRoadPict *ebiten.Image
 var road1 *ebiten.Image
 var road2 *ebiten.Image
+var road3 *ebiten.Image
+var road4 *ebiten.Image
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -63,30 +62,32 @@ type Sprite struct {
 	//car cords
 }
 
-//go:embed graphics/frogger.png graphics/redCar.png graphics/yellowCar.png graphics/turtle.png graphics/wood.png graphics/turtle2.png graphics/wood2.png graphics/road.png
+//go:embed graphics/frogger.png graphics/redCar.png graphics/yellowCar.png graphics/turtle.png graphics/wood.png graphics/turtle2.png graphics/wood2.png graphics/road.png graphics/redCar2.png graphics/yellowCar2.png
 var embeddedAssets embed.FS
 var road = ebiten.NewImage(ScreenWidth, ScreenHeight)
 
 type Game struct {
-	mode             Mode
-	modeGameover     int
-	froggerSprite    Sprite
-	redcarSprites    Sprite
-	yellowCarSprites Sprite
-	turtleSprite     Sprite
-	turtle2Sprite    Sprite
-	woodSprite       Sprite
-	wood2Sprite      Sprite
-	roadSprite       Sprite
-	froggy           []frogPlacement
-	redCar           frogPlacement
-	drawOps          ebiten.DrawImageOptions
-	frogCollides     bool
-	score            int
-	carHighway       []Sprite
-	timer            int
-	moveTime         int
-	angle            int
+	mode              Mode
+	modeGameover      int
+	froggerSprite     Sprite
+	redcarSprites     Sprite
+	redcar2Sprites    Sprite
+	yellowCarSprites  Sprite
+	yellowCar2Sprites Sprite
+	turtleSprite      Sprite
+	turtle2Sprite     Sprite
+	woodSprite        Sprite
+	wood2Sprite       Sprite
+	roadSprite        Sprite
+	froggy            []frogPlacement
+	redCar            frogPlacement
+	drawOps           ebiten.DrawImageOptions
+	frogCollides      bool
+	score             int
+	carHighway        []Sprite
+	timer             int
+	moveTime          int
+	angle             int
 }
 type frogPlacement struct {
 	XSpot int
@@ -112,10 +113,24 @@ func (g *Game) reset() {
 		dx:    0,
 		dy:    0,
 	}
+	g.redcar2Sprites = Sprite{
+		picts: loadPNGImageFromEmbedded("redCar2.png"),
+		xloc:  700,
+		yloc:  450,
+		dx:    0,
+		dy:    0,
+	}
 	g.yellowCarSprites = Sprite{
 		picts: loadPNGImageFromEmbedded("yellowCar.png"),
 		xloc:  600,
 		yloc:  160,
+		dx:    0,
+		dy:    0,
+	}
+	g.yellowCar2Sprites = Sprite{
+		picts: loadPNGImageFromEmbedded("yellowCar2.png"),
+		xloc:  600,
+		yloc:  200,
 		dx:    0,
 		dy:    0,
 	}
@@ -163,6 +178,17 @@ func carRedSquishesFrog(frog, car Sprite) bool {
 	}
 	return false
 }
+func carRed2SquishesFrog(frog, car Sprite) bool {
+	carWidth, carHieght := car.picts.Size()
+	frogWidth, frogHeight := frog.picts.Size()
+	if frog.xloc < car.xloc+carWidth &&
+		frog.xloc+frogWidth > car.xloc &&
+		frog.yloc < car.yloc+carHieght &&
+		frog.yloc+frogHeight > car.yloc {
+		return true
+	}
+	return false
+}
 func angleHitsFrog(frog, car Sprite) bool {
 	carAngle, carHieght := car.picts.Size()
 	frogWidth, frogHeight := frog.picts.Size()
@@ -187,6 +213,18 @@ func carYellowSquishesFrog(frog, car Sprite) bool {
 	return false
 }
 
+func carYellow2SquishesFrog(frog, car Sprite) bool {
+	carWidth, carHieght := car.picts.Size()
+	frogWidth, frogHeight := frog.picts.Size()
+	if frog.xloc < car.xloc+carWidth &&
+		frog.xloc+frogWidth > car.xloc &&
+		frog.yloc < car.yloc+carHieght &&
+		frog.yloc+frogHeight > car.yloc {
+		return true
+	}
+	return false
+}
+
 //frog gotta move move
 func (g *Game) frogGottaJump() bool {
 	return g.timer%g.moveTime == 0
@@ -198,7 +236,6 @@ func (g *Game) Update() error {
 	g.froggerSprite.xloc += g.froggerSprite.dx
 	if g.frogCollides == true {
 		g.reset()
-<<<<<<< HEAD
 		g.score++
 	}
 	if g.frogCollides == false {
@@ -212,17 +249,17 @@ func (g *Game) Update() error {
 	if g.frogCollides == false {
 		g.frogCollides = angleHitsFrog(g.froggerSprite, g.redcarSprites)
 		g.score++
-=======
+
 	}
 	if g.frogCollides == false {
-		g.frogCollides = carRedSquishesFrog(g.froggerSprite, g.redcarSprites)
+		g.frogCollides = carRed2SquishesFrog(g.froggerSprite, g.redcarSprites)
 	}
 	if g.frogCollides == false {
-		g.frogCollides = carYellowSquishesFrog(g.froggerSprite, g.yellowCarSprites)
+		g.frogCollides = carYellow2SquishesFrog(g.froggerSprite, g.yellowCarSprites)
 	}
 	if g.frogCollides == false {
 		g.frogCollides = angleHitsFrog(g.froggerSprite, g.redcarSprites)
->>>>>>> origin/master
+
 	}
 
 	g.angle++
@@ -268,24 +305,38 @@ func movements(g *Game) {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0x80, 0xa0, 0xc0, 0xff})
-<<<<<<< HEAD
+
 	ebitenutil.DebugPrint(screen, fmt.Sprintf("Score: %d", g.score))
-=======
+
 	ebitenutil.DebugPrint(screen, "Score: %d")
->>>>>>> origin/master
+
 	//first road
-	road1 = ebiten.NewImage(800, 20)
+	road1 = ebiten.NewImage(1000, 20)
 	opts := &ebiten.DrawImageOptions{}
-	opts.GeoM.Translate(64, 150)
+	opts.GeoM.Translate(80, 500)
 	road1.Fill(color.Black)
 	screen.DrawImage(road1, opts)
 	g.drawOps.GeoM.Reset()
 	//2nd road
-	road2 = ebiten.NewImage(800, 20)
+	road2 = ebiten.NewImage(1000, 20)
 	opts2 := &ebiten.DrawImageOptions{}
-	opts2.GeoM.Translate(64, 300)
+	opts2.GeoM.Translate(64, 400)
 	road2.Fill(color.Black)
 	screen.DrawImage(road2, opts2)
+	g.drawOps.GeoM.Reset()
+	//third road
+	road3 = ebiten.NewImage(1000, 20)
+	opts3 := &ebiten.DrawImageOptions{}
+	opts3.GeoM.Translate(80, 450)
+	road3.Fill(color.Black)
+	screen.DrawImage(road3, opts3)
+	g.drawOps.GeoM.Reset()
+	//fourth road
+	road4 = ebiten.NewImage(1000, 20)
+	opts4 := &ebiten.DrawImageOptions{}
+	opts4.GeoM.Translate(80, 350)
+	road4.Fill(color.Black)
+	screen.DrawImage(road4, opts4)
 	g.drawOps.GeoM.Reset()
 
 	//frog image
@@ -299,11 +350,24 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.DrawImage(g.redcarSprites.picts, &g.drawOps)
 		g.drawOps.GeoM.Reset()
 	}
-	//yellow car img
+	//redcar2 img
+	if !g.frogCollides {
+		g.drawOps.GeoM.Translate(float64(g.redcar2Sprites.xloc), float64(g.redcar2Sprites.yloc))
+		g.drawOps.GeoM.Rotate(0.5 * math.Pi * float64(g.angle) / maxAngle)
+		screen.DrawImage(g.redcar2Sprites.picts, &g.drawOps)
+		g.drawOps.GeoM.Reset()
+	}
+	//yellow2 car img
 	g.drawOps.GeoM.Translate(float64(g.yellowCarSprites.xloc), float64(g.yellowCarSprites.yloc))
 	g.drawOps.GeoM.Rotate(0.5 * math.Pi * float64(g.angle) / maxAngle)
 	screen.DrawImage(g.yellowCarSprites.picts, &g.drawOps)
 	g.drawOps.GeoM.Reset()
+	//yellow car 2
+	g.drawOps.GeoM.Translate(float64(g.yellowCar2Sprites.xloc), float64(g.yellowCar2Sprites.yloc))
+	g.drawOps.GeoM.Rotate(0.5 * math.Pi * float64(g.angle) / maxAngle)
+	screen.DrawImage(g.yellowCar2Sprites.picts, &g.drawOps)
+	g.drawOps.GeoM.Reset()
+
 	//turtle img
 	g.drawOps.GeoM.Translate(float64(g.turtleSprite.xloc), float64(g.turtleSprite.yloc))
 	g.drawOps.GeoM.Rotate(0.08 * math.Pi * float64(g.angle) / maxAngle)
@@ -338,8 +402,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 	if !g.frogCollides {
 		g.drawOps.GeoM.Reset()
+		g.drawOps.GeoM.Translate(float64(g.redcar2Sprites.xloc), float64(g.redcar2Sprites.yloc))
+		screen.DrawImage(g.redcar2Sprites.picts, &g.drawOps)
+	}
+	if !g.frogCollides {
+		g.drawOps.GeoM.Reset()
 		g.drawOps.GeoM.Translate(float64(g.yellowCarSprites.xloc), float64(g.yellowCarSprites.yloc))
 		screen.DrawImage(g.yellowCarSprites.picts, &g.drawOps)
+	}
+
+	if !g.frogCollides {
+		g.drawOps.GeoM.Reset()
+		g.drawOps.GeoM.Translate(float64(g.yellowCar2Sprites.xloc), float64(g.yellowCar2Sprites.yloc))
+		screen.DrawImage(g.yellowCar2Sprites.picts, &g.drawOps)
 	}
 
 }
@@ -382,15 +457,29 @@ func main() {
 	}
 	gameObject.redcarSprites = Sprite{
 		picts: loadPNGImageFromEmbedded("redCar.png"),
-		xloc:  700,
-		yloc:  300,
+		xloc:  600,
+		yloc:  500,
+		dx:    0,
+		dy:    0,
+	}
+	gameObject.redcar2Sprites = Sprite{
+		picts: loadPNGImageFromEmbedded("redCar2.png"),
+		xloc:  600,
+		yloc:  450,
 		dx:    0,
 		dy:    0,
 	}
 	gameObject.yellowCarSprites = Sprite{
 		picts: loadPNGImageFromEmbedded("yellowCar.png"),
 		xloc:  600,
-		yloc:  150,
+		yloc:  400,
+		dx:    0,
+		dy:    0,
+	}
+	gameObject.yellowCar2Sprites = Sprite{
+		picts: loadPNGImageFromEmbedded("yellowCar2.png"),
+		xloc:  600,
+		yloc:  350,
 		dx:    0,
 		dy:    0,
 	}
