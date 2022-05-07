@@ -45,6 +45,10 @@ var road1 *ebiten.Image
 var road2 *ebiten.Image
 var road3 *ebiten.Image
 var road4 *ebiten.Image
+var turtleLane1 *ebiten.Image
+var turtleLane2 *ebiten.Image
+var woodLane1 *ebiten.Image
+var woodLane2 *ebiten.Image
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -338,6 +342,34 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	road4.Fill(color.Black)
 	screen.DrawImage(road4, opts4)
 	g.drawOps.GeoM.Reset()
+	//turtle lane 1
+	turtleLane1 = ebiten.NewImage(1000, 20)
+	tl1 := &ebiten.DrawImageOptions{}
+	tl1.GeoM.Translate(80, 200)
+	turtleLane1.Fill(color.Black)
+	screen.DrawImage(turtleLane1, tl1)
+	g.drawOps.GeoM.Reset()
+	//turtle lane 2
+	turtleLane2 = ebiten.NewImage(1000, 20)
+	tl2 := &ebiten.DrawImageOptions{}
+	tl2.GeoM.Translate(80, 250)
+	turtleLane2.Fill(color.Black)
+	screen.DrawImage(turtleLane2, tl2)
+	g.drawOps.GeoM.Reset()
+	//wood lane 1
+	woodLane1 = ebiten.NewImage(1000, 20)
+	wlane1 := &ebiten.DrawImageOptions{}
+	wlane1.GeoM.Translate(8, 150)
+	woodLane1.Fill(color.Black)
+	screen.DrawImage(woodLane1, wlane1)
+	g.drawOps.GeoM.Reset()
+	//wood lane 2
+	woodLane2 = ebiten.NewImage(1000, 20)
+	wlane2 := &ebiten.DrawImageOptions{}
+	wlane2.GeoM.Translate(8, 100)
+	woodLane2.Fill(color.Black)
+	screen.DrawImage(woodLane2, wlane2)
+	g.drawOps.GeoM.Reset()
 
 	//frog image
 	g.drawOps.GeoM.Translate(float64(g.froggerSprite.xloc), float64(g.froggerSprite.yloc))
@@ -416,6 +448,26 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		g.drawOps.GeoM.Translate(float64(g.yellowCar2Sprites.xloc), float64(g.yellowCar2Sprites.yloc))
 		screen.DrawImage(g.yellowCar2Sprites.picts, &g.drawOps)
 	}
+	if !g.frogCollides {
+		g.drawOps.GeoM.Reset()
+		g.drawOps.GeoM.Translate(float64(g.turtleSprite.xloc), float64(g.turtleSprite.yloc))
+		screen.DrawImage(g.turtleSprite.picts, &g.drawOps)
+	}
+	if !g.frogCollides {
+		g.drawOps.GeoM.Reset()
+		g.drawOps.GeoM.Translate(float64(g.turtle2Sprite.xloc), float64(g.turtle2Sprite.yloc))
+		screen.DrawImage(g.turtle2Sprite.picts, &g.drawOps)
+	}
+	if !g.frogCollides {
+		g.drawOps.GeoM.Reset()
+		g.drawOps.GeoM.Translate(float64(g.woodSprite.xloc), float64(g.woodSprite.yloc))
+		screen.DrawImage(g.woodSprite.picts, &g.drawOps)
+	}
+	if !g.frogCollides {
+		g.drawOps.GeoM.Reset()
+		g.drawOps.GeoM.Translate(float64(g.wood2Sprite.xloc), float64(g.wood2Sprite.yloc))
+		screen.DrawImage(g.woodSprite.picts, &g.drawOps)
+	}
 
 }
 
@@ -486,28 +538,28 @@ func main() {
 	gameObject.turtleSprite = Sprite{
 		picts: loadPNGImageFromEmbedded("turtle.png"),
 		xloc:  500,
-		yloc:  100,
+		yloc:  230,
 		dx:    0,
 		dy:    0,
 	}
 	gameObject.turtle2Sprite = Sprite{
 		picts: loadPNGImageFromEmbedded("turtle2.png"),
 		xloc:  300,
-		yloc:  200,
+		yloc:  180,
 		dx:    0,
 		dy:    0,
 	}
 	gameObject.woodSprite = Sprite{
 		picts: loadPNGImageFromEmbedded("wood.png"),
 		xloc:  150,
-		yloc:  100,
+		yloc:  130,
 		dx:    0,
 		dy:    0,
 	}
 	gameObject.wood2Sprite = Sprite{
 		picts: loadPNGImageFromEmbedded("wood2.png"),
 		xloc:  20,
-		yloc:  30,
+		yloc:  80,
 		dx:    0,
 		dy:    0,
 	}
