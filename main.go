@@ -98,10 +98,6 @@ type frogPlacement struct {
 	YSpot int
 }
 
-func rectangleCollision(r1X, r1Y, r1Width, r1Height, r2X, r2Y, r2Width, r2Height float64) bool {
-	return r1X-r1Width/2-r2Width/2 <= r2X && r2X <= r1X+r1Width/2+r2Width/2 && r1Y-r1Height/2-r2Height/2 <= r2Y && r2Y <= r1Y+r1Height/2+r2Height/2
-}
-
 func (g *Game) reset() {
 	g.froggerSprite = Sprite{
 		picts: loadPNGImageFromEmbedded("frogger.png"),
@@ -112,28 +108,28 @@ func (g *Game) reset() {
 	}
 	g.redcarSprites = Sprite{
 		picts: loadPNGImageFromEmbedded("redCar.png"),
-		xloc:  700,
-		yloc:  300,
+		xloc:  600,
+		yloc:  500,
 		dx:    0,
 		dy:    0,
 	}
 	g.redcar2Sprites = Sprite{
 		picts: loadPNGImageFromEmbedded("redCar2.png"),
-		xloc:  700,
+		xloc:  600,
 		yloc:  450,
 		dx:    0,
 		dy:    0,
 	}
 	g.yellowCarSprites = Sprite{
 		picts: loadPNGImageFromEmbedded("yellowCar.png"),
-		xloc:  600,
+		xloc:  400,
 		yloc:  160,
 		dx:    0,
 		dy:    0,
 	}
 	g.yellowCar2Sprites = Sprite{
 		picts: loadPNGImageFromEmbedded("yellowCar2.png"),
-		xloc:  600,
+		xloc:  400,
 		yloc:  200,
 		dx:    0,
 		dy:    0,
@@ -229,7 +225,7 @@ func carYellow2SquishesFrog(frog, car Sprite) bool {
 	return false
 }
 
-//frog gotta move move
+//frog jump
 func (g *Game) frogGottaJump() bool {
 	return g.timer%g.moveTime == 0
 }
@@ -256,14 +252,13 @@ func (g *Game) Update() error {
 
 	}
 	if g.frogCollides == false {
-		g.frogCollides = carRed2SquishesFrog(g.froggerSprite, g.redcarSprites)
+		g.frogCollides = carRed2SquishesFrog(g.froggerSprite, g.redcar2Sprites)
 	}
 	if g.frogCollides == false {
-		g.frogCollides = carYellow2SquishesFrog(g.froggerSprite, g.yellowCarSprites)
+		g.frogCollides = carYellow2SquishesFrog(g.froggerSprite, g.yellowCar2Sprites)
 	}
 	if g.frogCollides == false {
 		g.frogCollides = angleHitsFrog(g.froggerSprite, g.redcarSprites)
-
 	}
 
 	g.angle++
@@ -390,10 +385,12 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		g.drawOps.GeoM.Reset()
 	}
 	//yellow2 car img
-	g.drawOps.GeoM.Translate(float64(g.yellowCarSprites.xloc), float64(g.yellowCarSprites.yloc))
-	g.drawOps.GeoM.Rotate(0.5 * math.Pi * float64(g.angle) / maxAngle)
-	screen.DrawImage(g.yellowCarSprites.picts, &g.drawOps)
-	g.drawOps.GeoM.Reset()
+	if !g.frogCollides {
+		g.drawOps.GeoM.Translate(float64(g.yellowCarSprites.xloc), float64(g.yellowCarSprites.yloc))
+		g.drawOps.GeoM.Rotate(0.5 * math.Pi * float64(g.angle) / maxAngle)
+		screen.DrawImage(g.yellowCarSprites.picts, &g.drawOps)
+		g.drawOps.GeoM.Reset()
+	}
 	//yellow car 2
 	g.drawOps.GeoM.Translate(float64(g.yellowCar2Sprites.xloc), float64(g.yellowCar2Sprites.yloc))
 	g.drawOps.GeoM.Rotate(0.5 * math.Pi * float64(g.angle) / maxAngle)
@@ -563,6 +560,9 @@ func main() {
 		dx:    0,
 		dy:    0,
 	}
+	//testCarSquishFrog(carRedSquishesFrog())
+	//testNewGame(&gameObject)
+	//testRotation(&gameObject)
 
 	if err := ebiten.RunGame(&gameObject); err != nil {
 		log.Fatal("Oh no! something terrible happened", err)
